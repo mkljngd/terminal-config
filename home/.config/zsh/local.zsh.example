@@ -1,0 +1,6 @@
+# Copy to local.zsh for machine-specific aliases and functions (not committed).
+# Sourced after aliases.zsh/functions.zsh, so it can also override them.
+
+# alias sshdev='ssh user@dev-host'
+# alias kctx-prod='gcloud container clusters get-credentials <cluster> --region <region> --project <project>'
+# alias vpn-up="sudo openvpn --config ~/vpn/client.ovpn --auth-user-pass ~/vpn/creds.txt --daemon"

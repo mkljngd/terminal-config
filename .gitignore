@@ -1,0 +1,7 @@
+# Machine-specific overrides: hosts, clusters, credentials paths, company tooling.
+home/.config/zsh/local.zsh
+windows/.wezterm-local.lua
+
+# Backups made by install.sh and local tooling
+*.pre-*
+__pycache__/
