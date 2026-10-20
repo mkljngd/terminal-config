@@ -30,7 +30,9 @@ _git_default_base() {
     echo "$want"
     return
   fi
-  base=$(git symbolic-ref --quiet refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+  # Ask GitHub, not the local origin/HEAD ref: clones that never ran
+  # `git remote set-head` don't have one, which used to fall through to "main".
+  base=$(git ls-remote --symref origin HEAD 2>/dev/null | awk '/^ref:/ {sub("refs/heads/", "", $2); print $2}')
   echo "${base:-main}"
 }
 
