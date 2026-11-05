@@ -24,6 +24,8 @@ On a fresh Windows machine:
    the login shell, then runs `install.sh`.
 3. Open WezTerm.
 
+On a Mac (or Linux) with Ghostty instead of WezTerm, follow [GHOSTTY.md](GHOSTTY.md).
+
 `bash install.sh` re-applies just the config files. Anything replaced is backed
 up as `*.pre-dotfiles-<timestamp>`.
 
