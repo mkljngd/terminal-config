@@ -60,5 +60,9 @@ gitmr() {
   # PR template or many commits can produce a URL past the OS length limit
   # and silently create nothing. Plain `gh pr create` posts via the API and
   # prints the PR URL to stdout instead.
-  gh pr create --base "$base" --head "$branch" --fill
+  local url
+  url=$(gh pr create --base "$base" --head "$branch" --fill) || return 1
+  url="${url%%$'\n'*}/changes"
+  echo "$url"
+  print -rn -- "$url" | _ks-system-clipboard && echo "(copied)"
 }

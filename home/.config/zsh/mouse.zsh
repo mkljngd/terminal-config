@@ -10,7 +10,11 @@
 # reporting and sets the user var ZSH_MOUSE_HANDOFF (Cell / Word / Line), and
 # .wezterm.lua starts a normal selection there; releasing the button makes
 # WezTerm send ESC[1999~, which gives the mouse back to zsh. Reporting is also
-# off while commands run. Wheel, right-click and Ctrl+click stay with WezTerm.
+# off while commands run. Right-click and Ctrl+click stay with WezTerm.
+#
+# Wheel up hands the mouse over too (ZSH_MOUSE_HANDOFF=WheelUp): WezTerm
+# jumps to the bottom on every mouse event while zsh reports the mouse, so it
+# can only scroll back once zsh lets go. A key press or click takes it back.
 #
 # Off: `export ZLE_MOUSE=0` in .zshenv.
 
@@ -115,6 +119,7 @@ _km_handoff() {
   case $1 in
     Word) b64=V29yZA== ;;
     Line) b64=TGluZQ== ;;
+    WheelUp) b64=V2hlZWxVcA== ;;
     *)    b64=Q2VsbA== ;;
   esac
   _km_handed_off=1
@@ -167,6 +172,7 @@ _km-mouse() {
   [[ $seq == (#b)(<->)';'(<->)';'(<->)([Mm]) ]] || return 0
   local -i b=$match[1] x=$match[2] y=$match[3]
   local kind=$match[4]
+  (( b == 64 )) && { _km_handoff WheelUp; return 0 }   # scroll back: WezTerm's
   (( b & (64 | 8 | 16) )) && return 0           # wheel / Alt / Ctrl: not ours
   (( (b & 3) == 0 )) || return 0                # left button only
 

@@ -183,8 +183,8 @@ local right_click = wezterm.action_callback(function(window, pane)
 end)
 
 -- zsh turns on mouse reporting while you edit a command (mouse.zsh: click,
--- drag, double-click on the command line). These keep the wheel, right-click
--- with WezTerm there; `alt_screen = false` leaves full-screen apps (vim,
+-- drag, double-click on the command line). These keep right-click with
+-- WezTerm there; `alt_screen = false` leaves full-screen apps (vim,
 -- less, htop, Claude Code) in charge of their own mouse.
 -- Shift+drag still selects terminal text while zsh has the mouse.
 local function at_prompt(binding)
@@ -196,9 +196,15 @@ end
 -- mouse.zsh hands a press above the command line back to WezTerm by setting
 -- the user var ZSH_MOUSE_HANDOFF to Cell / Word / Line: start a normal
 -- selection there, so earlier output can be selected with a plain drag.
+-- WheelUp: zsh let go of the mouse so WezTerm can scroll back (it jumps to
+-- the bottom on every mouse event while zsh reports the mouse); do the
+-- first scroll step, the wheel works natively after that.
 wezterm.on('user-var-changed', function(window, pane, name, value)
-  if name == 'ZSH_MOUSE_HANDOFF' and (value == 'Cell' or value == 'Word' or value == 'Line') then
+  if name ~= 'ZSH_MOUSE_HANDOFF' then return end
+  if value == 'Cell' or value == 'Word' or value == 'Line' then
     window:perform_action(act.SelectTextAtMouseCursor(value), pane)
+  elseif value == 'WheelUp' then
+    window:perform_action(act.ScrollByLine(-3), pane)
   end
 end)
 
@@ -220,8 +226,6 @@ config.mouse_bindings = {
   { event = { Up = { streak = 3, button = 'Left' } }, mods = 'NONE', action = finish_selection 'ClipboardAndPrimarySelection' },
   { event = { Down = { streak = 1, button = 'Right' } }, mods = 'NONE', action = right_click },
   at_prompt { event = { Down = { streak = 1, button = 'Right' } }, mods = 'NONE', action = right_click },
-  at_prompt { event = { Down = { streak = 1, button = { WheelUp = 1 } } }, mods = 'NONE', action = act.ScrollByCurrentEventWheelDelta },
-  at_prompt { event = { Down = { streak = 1, button = { WheelDown = 1 } } }, mods = 'NONE', action = act.ScrollByCurrentEventWheelDelta },
 }
 
 -- Ctrl+click opens links everywhere: plain output, the zsh prompt, and apps
